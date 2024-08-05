@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 
 import DataSourceService from '../../services/data/DBService';
-import { TABLE_COLUMNS, DEFAUTL_ORDER_BY } from '../../constants';
+import { TABLE_COLUMNS, DEFAUTL_ORDER_BY, isLoadingText } from '../../constants';
 import {
   RecordTypeAdapted,
   RecordTypeKeys,
@@ -25,18 +25,21 @@ const ViewerContainer = () => {
   const [rowsPerPage, setRowsPerPage] = useState<number>(INITIAL_ROWS_PER_PAGE);
   const [page, setPage] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [errorMessage, serErrorMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
 
   useEffect(() => {
     const filterValue: FetchRecordsFilterType = { recordProperty: orderBy, filterType: order };
     const start = rowsPerPage * page;
     const end = start + rowsPerPage;
+    setIsLoading(true);
     dataSourceService.fetchRecords(start, end, filterValue).then((rowData) => {
       const { batch, totalCount, error } = rowData;
       setDataInStore(batch);
       setTotalCount(totalCount);
-      serErrorMessage(error);
+      setErrorMessage(error);
+      setIsLoading(false);
     });
   }, [setDataInStore, order, orderBy, page, rowsPerPage]);
 
@@ -53,10 +56,15 @@ const ViewerContainer = () => {
 
   if (errorMessage !== '') {
     return (
-      <div>Sorry, something went wrong while fetching the records.</div>
+      <div>{errorMessage}</div>
     );
   }
 
+  if (isLoading) {
+    return (
+      <div>{isLoadingText}</div>
+    );
+  }
 
   return (
     <>

@@ -6,6 +6,8 @@ import {
 
 
 export function adaptInputRows(rowData: RecordTypeRow[]) {
+  const numberProperties = ['usdot_number', 'power_units'];
+
   return rowData.map((row: RecordTypeRow) => {
     let adaptedRow: Partial<RecordTypeAdapted> = {};
     (Object.keys(row) as RecordTypeKeys[]).forEach((key: RecordTypeKeys) => {
@@ -13,7 +15,7 @@ export function adaptInputRows(rowData: RecordTypeRow[]) {
       adaptedRow = {
         ...adaptedRow,
         [key]: value === null
-        ? (typeof value === 'number' ? 0 : '')
+        ? (numberProperties.includes(key) ? 0 : '')
         : value,
       }
     });

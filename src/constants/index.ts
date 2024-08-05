@@ -1,4 +1,4 @@
-import { Column, FetchRecordsFilterType } from "./types";
+import { Column, FetchRecordsFilterType } from "../types";
 
 export const DEFAUTL_ORDER_BY: FetchRecordsFilterType = {
   recordProperty: 'created_dt',
@@ -56,4 +56,7 @@ export const TABLE_COLUMNS: Column[] = [
   },
 ];
 
+
+// TODO: use i18n for translating into multiple languages if need to go international
 export const fetchRecordsFailedError = 'Internal server error while fetching records.';
+export const isLoadingText = 'Loading...';

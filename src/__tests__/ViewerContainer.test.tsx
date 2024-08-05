@@ -3,12 +3,14 @@ import { render, screen } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import {setupServer} from 'msw/node';
 import userEvent from '@testing-library/user-event';
-import TableComponent from './components/ViewerContainer/ViewerContainer';
-import data from './mockRecords.json';
-import { fetchRecordsFailedError } from './constants';
+import TableComponent from '../components/ViewerContainer/ViewerContainer';
+import data from './mocks/mockRecords.json';
+import { fetchRecordsFailedError } from '../constants';
 
 /**
- * The tests are not working due to issue with typescript configuration and 
+ * Only utils.test.ts works currently.
+ * 
+ * The tests here are not working due to issue with typescript configuration and 
  * issues with importing `import { http, HttpResponse } from 'msw';`
  * 
  * Although, the tests don't run, you can see the approach to testing. These tests
