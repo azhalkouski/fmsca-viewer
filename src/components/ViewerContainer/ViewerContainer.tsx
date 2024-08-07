@@ -78,7 +78,6 @@ const ViewerContainer = () => {
         handleRequestSort={handleRequestSort}
         errorMessage={errorMessage}
         isLoading={isLoading}
-        
       />
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
