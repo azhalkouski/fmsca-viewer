@@ -3,6 +3,7 @@ import { Column, FetchRecordsFilterType } from "../types";
 export const DEFAUTL_ORDER_BY: FetchRecordsFilterType = {
   recordProperty: 'created_dt',
   filterType: 'asc',
+  serachString: '',
 };
 
 export const TABLE_COLUMNS: Column[] = [

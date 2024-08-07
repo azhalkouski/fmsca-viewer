@@ -4,6 +4,7 @@ import {
   TableSortLabel, TablePagination, Paper
 } from '@mui/material';
 
+import DebouncedSearchField from '../DebouncedSearchField/DebouncedSearchField';
 import DataSourceService from '../../services/data/DBService';
 import { TABLE_COLUMNS, DEFAUTL_ORDER_BY, isLoadingText } from '../../constants';
 import {
@@ -27,10 +28,15 @@ const ViewerContainer = () => {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchString, setSearchString] = useState<string>('');
 
 
   useEffect(() => {
-    const filterValue: FetchRecordsFilterType = { recordProperty: orderBy, filterType: order };
+    const filterValue: FetchRecordsFilterType = {
+      recordProperty: orderBy,
+      filterType: order,
+      serachString: searchString,
+    };
     const start = rowsPerPage * page;
     const end = start + rowsPerPage;
     setIsLoading(true);
@@ -41,7 +47,7 @@ const ViewerContainer = () => {
       setErrorMessage(error);
       setIsLoading(false);
     });
-  }, [setDataInStore, order, orderBy, page, rowsPerPage]);
+  }, [setDataInStore, order, orderBy, page, rowsPerPage, searchString]);
 
 
   const handleRequestSort = (property: RecordTypeKeys) => {
@@ -53,6 +59,11 @@ const ViewerContainer = () => {
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
+
+  const handleSearchOnChange = (searchStr:  string) => {
+    setSearchString(searchStr);
+    // update query string ?
+  }
 
   if (errorMessage !== '') {
     return (
@@ -67,8 +78,9 @@ const ViewerContainer = () => {
   }
 
   return (
-    <>
+    <div style={{margin: '20px'}}>
       <TableContainer component={Paper}>
+        <DebouncedSearchField defaultValue={searchString} onChange={handleSearchOnChange}/>
         <Table>
           <TableHead>
             <TableRow>
@@ -112,7 +124,7 @@ const ViewerContainer = () => {
           setPage(0);
         }}
       />
-    </>
+    </div>
   );
 };
 
