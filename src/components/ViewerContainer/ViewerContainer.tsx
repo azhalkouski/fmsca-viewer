@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
-import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  TableSortLabel, TablePagination, Paper
-} from '@mui/material';
+import { TablePagination } from '@mui/material';
 
+import RecordsTableContainer from '../RecordsTableContainer/RecordsTableContainer';
 import DebouncedSearchField from '../DebouncedSearchField/DebouncedSearchField';
 import DataSourceService from '../../services/data/DBService';
-import { TABLE_COLUMNS, DEFAUTL_ORDER_BY, isLoadingText } from '../../constants';
+import { DEFAUTL_ORDER_BY } from '../../constants';
 import {
   RecordTypeAdapted,
   RecordTypeKeys,
@@ -21,14 +19,19 @@ const dataSourceService = new DataSourceService();
 
 const ViewerContainer = () => {
   const [dataInStore, setDataInStore] = useState<RecordTypeAdapted[]>([]);
-  const [order, setOrder] = useState< "asc" | "desc">(DEFAUTL_ORDER_BY.filterType);
+
+  // useEffect related state:: fetch records
+  const [order, setOrder] = useState<"asc" | "desc">(DEFAUTL_ORDER_BY.filterType);
   const [orderBy, setOrderBy] = useState<RecordTypeKeys>(DEFAUTL_ORDER_BY.recordProperty);
   const [rowsPerPage, setRowsPerPage] = useState<number>(INITIAL_ROWS_PER_PAGE);
   const [page, setPage] = useState<number>(0);
-  const [totalCount, setTotalCount] = useState<number>(0);
+  const [searchString, setSearchString] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [searchString, setSearchString] = useState<string>('');
+
+
+  // Pagination related state
+  const [totalCount, setTotalCount] = useState<number>(0);
 
 
   useEffect(() => {
@@ -65,53 +68,18 @@ const ViewerContainer = () => {
     // update query string ?
   }
 
-  if (errorMessage !== '') {
-    return (
-      <div>{errorMessage}</div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div>{isLoadingText}</div>
-    );
-  }
-
   return (
     <div style={{margin: '20px'}}>
-      <TableContainer component={Paper}>
-        <DebouncedSearchField defaultValue={searchString} onChange={handleSearchOnChange}/>
-        <Table>
-          <TableHead>
-            <TableRow>
-              {TABLE_COLUMNS.map((e) => {
-                return (
-                  <TableCell key={e.key}>
-                    <TableSortLabel
-                      active={orderBy === e.key}
-                      direction={orderBy === e.key ? order : 'asc'}
-                      onClick={() => handleRequestSort(e.key)}
-                    >
-                      {e.label}
-                    </TableSortLabel>
-                  </TableCell>
-                );
-              })}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {dataInStore.map((row, index) => (
-              <TableRow key={index}>
-                {TABLE_COLUMNS.map((e) => {
-                  return (
-                    <TableCell key={e.key}>{row[e.key].toString()}</TableCell>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <DebouncedSearchField defaultValue={searchString} onChange={handleSearchOnChange}/>
+      <RecordsTableContainer
+        records={dataInStore}
+        order={order}
+        orderBy={orderBy}
+        handleRequestSort={handleRequestSort}
+        errorMessage={errorMessage}
+        isLoading={isLoading}
+        
+      />
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
