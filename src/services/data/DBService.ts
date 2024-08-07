@@ -12,11 +12,17 @@ class DataSourceService implements AbstractDataSourceService {
       const data: RecordTypeRow[] = await response.json();
       const adaptedData = adaptInputRows(data);
 
-      // in a real world application the sorting functionality with
-      // such a big data would be done at the database layer
-      // and the appliation server would return a batch of data
-      // sliced from a sorted data sequence
-      const batch = adaptedData
+      const fiterPredicate = (searchStr: string) => (el: RecordTypeRow) => {
+        if (searchStr === "") {
+          return true;
+        };
+
+        return Object.values(el).includes(searchStr);
+      };
+
+      const filteredData = adaptedData.filter(fiterPredicate(filter.serachString));
+
+      const batch = filteredData
         .sort((a, b) => {
           const { recordProperty, filterType } = filter;
           const orderBy = recordProperty;
@@ -28,7 +34,7 @@ class DataSourceService implements AbstractDataSourceService {
         })
         .slice(start, end);
 
-      return { batch: batch, totalCount: adaptedData.length, error: ''};
+      return { batch: batch, totalCount: filteredData.length, error: ''};
     } catch (e) {
       console.error(`Something happened ${JSON.stringify(e)}`);
       // log error to external logs database if one is in use

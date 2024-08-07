@@ -38,6 +38,7 @@ export type Column = {
 export interface FetchRecordsFilterType {
   recordProperty: RecordTypeKeys;
   filterType: 'asc' | 'desc';
+  serachString: string;
 };
 
 export interface PaginatedRowsBatch {
